@@ -14,7 +14,7 @@ def unquote(sym):
 
 def flatten(phi):
     match phi:
-        case ("and", *args):
+        case ["and", *args]:
             return [phi for arg in args for phi in flatten(arg)]
         case _:
             return [phi]
@@ -26,7 +26,11 @@ def is_linear(phis, predicates):
     # does not catch predicates inside lets
     for phi in phis:
         match phi:
-            case (fun, *args) if unquote(fun) in predicates:
+            case str() as fun if unquote(fun) in predicates:
+                n = n + 1
+                if n > 1:
+                    linear = False
+            case [fun, *args] if unquote(fun) in predicates:
                 n = n + 1
                 if n > 1:
                     linear = False
